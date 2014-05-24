@@ -20,6 +20,8 @@ public class Play implements Screen {
 
 	@Override
 	public void show() {
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
 
 	}
