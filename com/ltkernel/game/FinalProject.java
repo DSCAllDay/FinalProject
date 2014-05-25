@@ -1,7 +1,6 @@
 package com.ltkernel.game;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.ltkernel.screens.*;
@@ -13,9 +12,5 @@ public class FinalProject extends Game {
 	@Override
 	public void create () {
 		setScreen(new Play());
-	}
-
-	@Override
-	public void render () {
 	}
 }
