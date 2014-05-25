@@ -48,6 +48,7 @@ public class Play implements Screen {
 
 
 
+
 		System.out.println(player.getPosition().x + " " + player.getPosition().y);
 		if(player.getPosition().x > edgeX) {
 
@@ -63,7 +64,6 @@ public class Play implements Screen {
 		}
 
 		cam.position.set(player.getPosition().x, player.getPosition().y, 0);
-		System.out.println(cam.position);
 
 
 
@@ -76,6 +76,9 @@ public class Play implements Screen {
 		sb.setProjectionMatrix(cam.combined);
 
 		sb.begin();
+		if(Gdx.input.isTouched()) {
+			System.out.println("hey");
+		}
 		world.getBodies(tempBodies);
 		for(Body body : tempBodies) {
 			if(body.getUserData() != null && body.getUserData() instanceof Sprite) {
