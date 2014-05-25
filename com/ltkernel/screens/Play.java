@@ -9,8 +9,6 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.*;
 import com.ltkernel.managers.*;
 
-import java.util.*;
-
 /**
  * Created by esauKang on 5/24/14.
  */
