@@ -14,6 +14,7 @@ import com.ltkernel.managers.*;
  * Created by esauKang on 5/24/14.
  */
 public class Play implements Screen {
+	
 	private SpriteBatch sb;
 	private OrthogonalTiledMapRenderer renderer;
 	private OrthographicCamera cam;
@@ -22,10 +23,8 @@ public class Play implements Screen {
 	private Box2DDebugRenderer debugRenderer;
 	private Body player;
 	public static Vector2 movement;
-	private Sprite playerSprite;
+	private Sprite playerSprite, playerHead;
 	private Array<Body> tempBodies = new Array<Body>();
-	private float edgeX = 4;
-	private float edgeY = 3;
 	private float speed = 500f;
 	private RayHandler rayHandler;
 	private FPSLogger logger;
@@ -48,14 +47,12 @@ public class Play implements Screen {
 
 		if(player.getPosition().x >= cam.position.x + 2.5f) {
 			cam.position.set(player.getPosition().x - 2.5f, cam.position.y, 0);
-		}
-		if(player.getPosition().x <= cam.position.x - 2.5f) {
+		} else if(player.getPosition().x <= cam.position.x - 2.5f) {
 			cam.position.set(player.getPosition().x + 2.5f, cam.position.y, 0);
 		}
 		if(player.getPosition().y >= cam.position.y + 2.5f) {
 			cam.position.set(cam.position.x, player.getPosition().y - 2.5f, 0);
-		}
-		if(player.getPosition().y <= cam.position.y - 2.5f) {
+		} else if(player.getPosition().y <= cam.position.y - 2.5f) {
 			cam.position.set(cam.position.x, player.getPosition().y + 2.5f, 0);
 		}
 
@@ -69,6 +66,9 @@ public class Play implements Screen {
 		if(Gdx.input.isTouched()) {
 			System.out.println("hey");
 		}
+
+
+
 		world.getBodies(tempBodies);
 		for(Body body : tempBodies) {
 			if(body.getUserData() != null && body.getUserData() instanceof Sprite) {
@@ -78,6 +78,12 @@ public class Play implements Screen {
 				sprite.draw(sb);
 			}
 		}
+		//here
+		playerHead.setY(player.getPosition().y - playerSprite.getHeight() / 2);
+		playerHead.setX(player.getPosition().x - playerSprite.getWidth() / 2);
+		playerHead.setRotation(playerSprite.getRotation());
+		playerHead.draw(sb);
+		//here
 		sb.end();
 		logger.log();
 	}
@@ -140,6 +146,13 @@ public class Play implements Screen {
 		playerSprite.setSize(4, 4);
 		playerSprite.setOrigin(playerSprite.getWidth() / 2, playerSprite.getHeight() / 2);
 		player.setUserData(playerSprite);
+
+		//here
+		playerHead = new Sprite(new Texture("anims/Bodhead.png"));
+		playerHead.setSize(4, 4);
+		playerHead.setOrigin(playerHead.getWidth() / 2, playerHead.getHeight() / 2);
+
+		//here
 
 		shape.dispose();
 
