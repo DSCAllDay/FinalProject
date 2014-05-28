@@ -31,6 +31,9 @@ public class Play implements Screen {
 	private RayHandler rayHandler;
 	private FPSLogger logger;
 	private Vector3 camFollow;
+	private Vector3 touchPos;
+	private float mouseAngle;
+	private Vector3 temp;
 
 	private final float PIXELS_TO_METERS = 32;
 
@@ -40,26 +43,20 @@ public class Play implements Screen {
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
 		debugRenderer.render(world, cam.combined);
-
 		world.step(1/60f, 8, 3);
+
 		handleInput();
 
 		player.applyLinearImpulse(movement, new Vector2(player.getPosition()), true);
-		//player.setTransform(player.getPosition(), Gdx.input.getX());
 
-		if(player.getPosition().x >= cam.position.x + 2.5f) {
-			cam.position.set(player.getPosition().x - 2.5f, cam.position.y, 0);
-		} else if(player.getPosition().x <= cam.position.x - 2.5f) {
-			cam.position.set(player.getPosition().x + 2.5f, cam.position.y, 0);
-		}
-		if(player.getPosition().y >= cam.position.y + 2.5f) {
-			cam.position.set(cam.position.x, player.getPosition().y - 2.5f, 0);
-		} else if(player.getPosition().y <= cam.position.y - 2.5f) {
-			cam.position.set(cam.position.x, player.getPosition().y + 2.5f, 0);
-		}
+		updateCamera();
 
-		cam.position.add(camFollow.set(player.getPosition().x, player.getPosition().y,0).sub(cam.position).scl(.1f));
-		cam.update();
+		touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+		temp = cam.unproject(touchPos);
+
+		mouseAngle = MathUtils.atan2(temp.y - player.getPosition().y, temp.x - player.getPosition().x);
+
+		player.setTransform(new Vector2(player.getPosition().x, player.getPosition().y), mouseAngle + MathUtils.PI / 2);
 
 		sb.setProjectionMatrix(cam.combined);
 		//rayHandler.updateAndRender();
@@ -80,14 +77,30 @@ public class Play implements Screen {
 				sprite.draw(sb);
 			}
 		}
-		//here
+
 		playerHead.setY(player.getPosition().y - playerSprite.getHeight() / 2);
 		playerHead.setX(player.getPosition().x - playerSprite.getWidth() / 2);
 		playerHead.setRotation(playerSprite.getRotation());
 		playerHead.draw(sb);
-		//here
+
 		sb.end();
 		logger.log();
+	}
+
+	private void updateCamera() {
+		if(player.getPosition().x >= cam.position.x + 2.5f) {
+			cam.position.set(player.getPosition().x - 2.5f, cam.position.y, 0);
+		} else if(player.getPosition().x <= cam.position.x - 2.5f) {
+			cam.position.set(player.getPosition().x + 2.5f, cam.position.y, 0);
+		}
+		if(player.getPosition().y >= cam.position.y + 2.5f) {
+			cam.position.set(cam.position.x, player.getPosition().y - 2.5f, 0);
+		} else if(player.getPosition().y <= cam.position.y - 2.5f) {
+			cam.position.set(cam.position.x, player.getPosition().y + 2.5f, 0);
+		}
+
+		cam.position.add(camFollow.set(player.getPosition().x, player.getPosition().y,0).sub(cam.position).scl(.1f));
+		cam.update();
 	}
 
 	private void handleInput() {
@@ -125,6 +138,7 @@ public class Play implements Screen {
 		debugRenderer = new Box2DDebugRenderer();
 		sb = new SpriteBatch();
 		cam = new OrthographicCamera(Gdx.graphics.getWidth() / 20, Gdx.graphics.getHeight() / 20);
+		touchPos = new Vector3();
 
 		camFollow = new Vector3();
 		Gdx.input.setInputProcessor(new InputManager(player));
