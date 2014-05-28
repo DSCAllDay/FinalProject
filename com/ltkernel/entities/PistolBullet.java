@@ -1,17 +1,13 @@
-package com.libgdxgaming.angryshooter.Objects;
+package com.ltkernel.entities;
 
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.bullet.*;
+import com.ltkernel.screens.*;
 
-public class PistolBullet extends Object {
-    public PistolBullet(float x, float y, Vector2 velocity) {
-        super(x, y);
-
-        this.velocity = velocity;
-    }
-
-    // We must override the original method in order to make the bullet go a little faster
-    @Override
-    public void update() {
-        position.add(velocity.x * 10, velocity.y * 10);
-    }
+/**
+ * Created by tommy_000 on 5/28/2014.
+ */
+public class PistolBullet extends Bullet {
 }
