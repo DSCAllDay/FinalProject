@@ -38,6 +38,9 @@ public class InputManager extends InputAdapter {
 			case Input.Keys.D:
 				D = true;
 				break;
+            case Input.Keys.SPACE:
+                SPACE = true;
+                break;
 		}
 		return true;
 	}
@@ -57,6 +60,9 @@ public class InputManager extends InputAdapter {
 			case Input.Keys.D:
 				D = false;
 				break;
+            case Input.Keys.SPACE:
+                SPACE = false;
+                break;
 		}
 		return true;
 	}

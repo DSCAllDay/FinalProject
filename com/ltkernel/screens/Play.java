@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.maps.tiled.renderers.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.utils.*;
+import com.ltkernel.entities.PistolBullet;
 import com.ltkernel.managers.*;
 
 /**
@@ -104,6 +106,10 @@ public class Play implements Screen {
 		} else if(!InputManager.A && !InputManager.D) {
 			movement.x = 0;
 		}
+
+        if(InputManager.SPACE) {
+            PistolBullet bullet = new PistolBullet();
+        }
 	}
 
 	@Override
