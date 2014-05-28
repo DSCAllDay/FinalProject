@@ -1,13 +1,11 @@
-package com.ltkernel.entities;
+package com.libgdxgaming.angryshooter.Objects;
 
 import com.badlogic.gdx.math.Vector2;
 
-public class PistolBullet {                 // extends Body?
-    private Vector2 position;
-    private Vector2 velocity;
-
+public class PistolBullet extends Object {
     public PistolBullet(float x, float y, Vector2 velocity) {
-        this.position = new Vector2(x, y);
+        super(x, y);
+
         this.velocity = velocity;
     }
 
