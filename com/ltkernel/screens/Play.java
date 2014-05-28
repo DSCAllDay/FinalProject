@@ -14,7 +14,7 @@ import com.ltkernel.managers.*;
  * Created by esauKang on 5/24/14.
  */
 public class Play implements Screen {
-	
+
 	private SpriteBatch sb;
 	private OrthogonalTiledMapRenderer renderer;
 	private OrthographicCamera cam;
