@@ -1,5 +1,6 @@
 package com.ltkernel.screens;
 
+import box2dLight.*;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -25,55 +26,44 @@ public class Play implements Screen {
 	private Array<Body> tempBodies = new Array<Body>();
 	private float edgeX = 4;
 	private float edgeY = 3;
+	private float speed = 500f;
+	private RayHandler rayHandler;
+	private FPSLogger logger;
+	private Vector3 camFollow;
 
 	private final float PIXELS_TO_METERS = 32;
-	private final float TIMESTEP = 1 / 60f;
-	private final int VELOCITYITERATIONS = 8;
-	private final int POSITIONITERATIONS = 3;
 
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
 		debugRenderer.render(world, cam.combined);
 
-		world.step(TIMESTEP, VELOCITYITERATIONS, POSITIONITERATIONS);
+		world.step(1/60f, 8, 3);
+		handleInput();
+
 		player.applyLinearImpulse(movement, new Vector2(player.getPosition()), true);
+		//player.setTransform(player.getPosition(), Gdx.input.getX());
 
-
-
-
-
-
-
-
-
-
-		System.out.println(player.getPosition().x + " " + player.getPosition().y);
-		if(player.getPosition().x > edgeX) {
-
+		if(player.getPosition().x >= cam.position.x + 2.5f) {
+			cam.position.set(player.getPosition().x - 2.5f, cam.position.y, 0);
 		}
-		if(player.getPosition().x < -edgeX) {
-
+		if(player.getPosition().x <= cam.position.x - 2.5f) {
+			cam.position.set(player.getPosition().x + 2.5f, cam.position.y, 0);
 		}
-		if(player.getPosition().y > edgeY) {
-
+		if(player.getPosition().y >= cam.position.y + 2.5f) {
+			cam.position.set(cam.position.x, player.getPosition().y - 2.5f, 0);
 		}
-		if(player.getPosition().y < -edgeY) {
-
+		if(player.getPosition().y <= cam.position.y - 2.5f) {
+			cam.position.set(cam.position.x, player.getPosition().y + 2.5f, 0);
 		}
 
-		cam.position.set(player.getPosition().x, player.getPosition().y, 0);
-
-
-
-
-
-
-
+		cam.position.add(camFollow.set(player.getPosition().x, player.getPosition().y,0).sub(cam.position).scl(.1f));
 		cam.update();
 
 		sb.setProjectionMatrix(cam.combined);
+		//rayHandler.updateAndRender();
 
 		sb.begin();
 		if(Gdx.input.isTouched()) {
@@ -89,35 +79,57 @@ public class Play implements Screen {
 			}
 		}
 		sb.end();
+		logger.log();
+	}
 
+	private void handleInput() {
+		if(InputManager.W) {
+			movement.y = speed;
+		} else if (InputManager.S) {
+			movement.y = -speed;
+		} else if(!InputManager.W && !InputManager.S) {
+			movement.y = 0;
+		}
 
+		if(InputManager.A) {
+			movement.x = -speed;
+		} else if(InputManager.D) {
+			movement.x = speed;
+		} else if(!InputManager.A && !InputManager.D) {
+			movement.x = 0;
+		}
 	}
 
 	@Override
 	public void resize(int width, int height) {
+
 	}
 
 	@Override
 	public void show() {
+		logger = new FPSLogger();
 		movement = new Vector2();
 		world = new World(new Vector2(), true);
 		debugRenderer = new Box2DDebugRenderer();
 		sb = new SpriteBatch();
 		cam = new OrthographicCamera(Gdx.graphics.getWidth() / 20, Gdx.graphics.getHeight() / 20);
 
+		camFollow = new Vector3();
 		Gdx.input.setInputProcessor(new InputManager(player));
+
 		//body def
 		BodyDef personDef = new BodyDef();
 		personDef.type = BodyDef.BodyType.DynamicBody;
-		personDef.position.set(1, 1);
+		personDef.position.set(0, 0);
 		personDef.linearDamping = 4f;
+		personDef.angularDamping = 4f;
 
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(1.3f, .7f);
+		shape.setAsBox(1.3f, .6f);
 
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
-		fixtureDef.density = 1000f;
+		fixtureDef.density = 100f;
 		fixtureDef.friction = .75f;
 		fixtureDef.restitution = .05f;
 
@@ -130,18 +142,39 @@ public class Play implements Screen {
 		player.setUserData(playerSprite);
 
 		shape.dispose();
+
+		personDef.type = BodyDef.BodyType.StaticBody;
+		personDef.position.set(-1, -1);
+
+		ChainShape groundShape = new ChainShape();
+		groundShape.createChain(new Vector2[] {
+				new Vector2(-20,0), new Vector2(20, 0), new Vector2(25, 10)
+		});
+
+		fixtureDef.shape = groundShape;
+		fixtureDef.friction = .5f;
+		fixtureDef.restitution = 0;
+
+		world.createBody(personDef).createFixture(fixtureDef);
+
+		//rayHandler = new RayHandler(world);
+		//rayHandler.setCombinedMatrix(cam.combined);
+		groundShape.dispose();
 	}
 
 	@Override
 	public void hide() {
+
 	}
 
 	@Override
 	public void pause() {
+
 	}
 
 	@Override
 	public void resume() {
+
 	}
 
 	@Override

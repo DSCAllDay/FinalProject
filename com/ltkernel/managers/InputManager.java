@@ -13,6 +13,12 @@ public class InputManager extends InputAdapter {
 	private float speed = 500f;
 	private int pKeycode;
 
+	public static boolean W;
+	public static boolean A;
+	public static boolean S;
+	public static boolean D;
+	public static boolean SPACE;
+
 	public InputManager(Body body) {
 		this.body = body;
 	}
@@ -21,16 +27,16 @@ public class InputManager extends InputAdapter {
 	public boolean keyDown(int keycode) {
 		switch(keycode) {
 			case Input.Keys.W:
-				Play.movement.y = speed;
+				W = true;
 				break;
 			case Input.Keys.A:
-				Play.movement.x = -speed;
+				A = true;
 				break;
 			case Input.Keys.S:
-				Play.movement.y = -speed;
+				S = true;
 				break;
 			case Input.Keys.D:
-				Play.movement.x = speed;
+				D = true;
 				break;
 		}
 		return true;
@@ -38,14 +44,22 @@ public class InputManager extends InputAdapter {
 
 	@Override
 	public boolean keyUp(int keycode) {
-		if((keycode == Input.Keys.A && !(pKeycode == Input.Keys.D)) ||
-				keycode == Input.Keys.D && !(pKeycode == Input.Keys.A)) {
-			Play.movement.x = 0;
-		} else if((keycode == Input.Keys.W && !(pKeycode == Input.Keys.S)) ||
-				keycode == Input.Keys.S && !(pKeycode == Input.Keys.W)) {
-			Play.movement.y = 0;
+		switch(keycode) {
+			case Input.Keys.W:
+				W = false;
+				break;
+			case Input.Keys.A:
+				A = false;
+				break;
+			case Input.Keys.S:
+				S = false;
+				break;
+			case Input.Keys.D:
+				D = false;
+				break;
 		}
-		pKeycode = keycode;
 		return true;
 	}
+
 }
+
