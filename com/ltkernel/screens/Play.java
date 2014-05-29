@@ -32,6 +32,7 @@ public class Play implements Screen {
 	private Vector3 touchPos;
 	private float mouseAngle;
 	private Vector3 temp;
+	private float bulletRad;
 
 	private final float PIXELS_TO_METERS = 32;
 
@@ -197,13 +198,13 @@ public class Play implements Screen {
 		}
 
 		if(Gdx.input.justTouched()) {
-			System.out.println("clicked");
+			bulletRad = player.getAngle() + MathUtils.PI / 2 + MathUtils.random(.01f, .25f);
 
 			BodyDef bulletDef = new BodyDef();
 			bulletDef.type = BodyDef.BodyType.DynamicBody;
 			bulletDef.linearVelocity.set(new Vector2(
-					player.getLinearVelocity().x + (MathUtils.cos(player.getAngle() + MathUtils.PI / 2) * 1000),
-					player.getLinearVelocity().y + (MathUtils.sin(player.getAngle() + MathUtils.PI / 2) * 1000)
+					player.getLinearVelocity().x + MathUtils.cos(bulletRad) * 5000,
+					player.getLinearVelocity().y + MathUtils.sin(bulletRad) * 5000
 			));
 
 			CircleShape bulletShape = new CircleShape();
@@ -211,7 +212,7 @@ public class Play implements Screen {
 			bulletShape.setPosition(new Vector2(player.getPosition()));
 
 			FixtureDef fixtureDef = new FixtureDef();
-			fixtureDef.density = 1f;
+			fixtureDef.density = .001f;
 			fixtureDef.restitution = 0;
 			fixtureDef.shape = bulletShape;
 
