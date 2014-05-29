@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.renderers.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.*;
+import com.ltkernel.entities.*;
 import com.ltkernel.managers.*;
 
 /**
@@ -33,6 +34,7 @@ public class Play implements Screen {
 	private float mouseAngle;
 	private Vector3 temp;
 	private float bulletRad;
+	private Person person;
 
 	private final float PIXELS_TO_METERS = 32;
 
@@ -49,39 +51,12 @@ public class Play implements Screen {
 
 		Gdx.input.setInputProcessor(new InputManager());
 
-		//person body
-
-		BodyDef personDef = new BodyDef();
-		personDef.type = BodyDef.BodyType.DynamicBody;
-		personDef.position.set(0, 0);
-		personDef.linearDamping = 4f;
-		personDef.angularDamping = 4f;
-
-		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(1.3f, .6f);
-
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = shape;
-		fixtureDef.density = 100f;
-		fixtureDef.friction = .75f;
-		fixtureDef.restitution = .05f;
-
-		player = world.createBody(personDef);
-		player.createFixture(fixtureDef);
-
-		playerSprite = new Sprite(new Texture("anims/Bodbod.png"));
-		playerSprite.setSize(4, 4);
-		playerSprite.setOrigin(playerSprite.getWidth() / 2, playerSprite.getHeight() / 2);
-		player.setUserData(playerSprite);
-
-		playerHead = new Sprite(new Texture("anims/Bodhead.png"));
-		playerHead.setSize(4, 4);
-		playerHead.setOrigin(playerHead.getWidth() / 2, playerHead.getHeight() / 2);
-
-		shape.dispose();
+		this.person = new Person("anims/Bodbod.png", "anims/Bodhead.png", 1 , 1, world);
+		this.player = person.getPlayer();
 
 		//groundbody
 
+		BodyDef personDef = new BodyDef();
 		personDef.type = BodyDef.BodyType.StaticBody;
 		personDef.position.set(-1, -1);
 
@@ -90,6 +65,7 @@ public class Play implements Screen {
 				new Vector2(-20,0), new Vector2(20, 0), new Vector2(25, 10)
 		});
 
+		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = groundShape;
 		fixtureDef.friction = .5f;
 		fixtureDef.restitution = 0;
@@ -155,10 +131,10 @@ public class Play implements Screen {
 			}
 		}
 
-		playerHead.setY(player.getPosition().y - playerSprite.getHeight() / 2);
-		playerHead.setX(player.getPosition().x - playerSprite.getWidth() / 2);
-		playerHead.setRotation(playerSprite.getRotation());
-		playerHead.draw(sb);
+		person.getPlayerHead().setY(person.getPlayer().getPosition().y - person.getPlayerSprite().getHeight() / 2);
+		person.getPlayerHead().setX(person.getPlayer().getPosition().x - person.getPlayerSprite().getWidth() / 2);
+		person.getPlayerHead().setRotation(person.getPlayerSprite().getRotation());
+		person.getPlayerHead().draw(sb);
 
 		sb.end();
 		logger.log();
