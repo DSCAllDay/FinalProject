@@ -62,11 +62,6 @@ public class Play implements Screen {
 		//rayHandler.updateAndRender();
 
 		sb.begin();
-		if(Gdx.input.isTouched()) {
-			System.out.println("hey");
-		}
-
-
 
 		world.getBodies(tempBodies);
 		for(Body body : tempBodies) {
@@ -139,8 +134,8 @@ public class Play implements Screen {
 		sb = new SpriteBatch();
 		cam = new OrthographicCamera(Gdx.graphics.getWidth() / 20, Gdx.graphics.getHeight() / 20);
 		touchPos = new Vector3();
-
 		camFollow = new Vector3();
+
 		Gdx.input.setInputProcessor(new InputManager(player));
 
 		//body def
@@ -167,12 +162,9 @@ public class Play implements Screen {
 		playerSprite.setOrigin(playerSprite.getWidth() / 2, playerSprite.getHeight() / 2);
 		player.setUserData(playerSprite);
 
-		//here
 		playerHead = new Sprite(new Texture("anims/Bodhead.png"));
 		playerHead.setSize(4, 4);
 		playerHead.setOrigin(playerHead.getWidth() / 2, playerHead.getHeight() / 2);
-
-		//here
 
 		shape.dispose();
 
@@ -190,14 +182,31 @@ public class Play implements Screen {
 
 		world.createBody(personDef).createFixture(fixtureDef);
 
+		groundShape.dispose();
+
+		personDef.type = BodyDef.BodyType.KinematicBody;
+		personDef.position.set(5, 10);
+
+		PolygonShape boxShape = new PolygonShape();
+		boxShape.setAsBox(2, 2);
+
+		fixtureDef.shape = boxShape;
+		fixtureDef.friction = .5f;
+		fixtureDef.restitution = .5f;
+		fixtureDef.density = 100;
+
+
+		world.createBody(personDef).createFixture(fixtureDef);
+
+		boxShape.dispose();
+
 		//rayHandler = new RayHandler(world);
 		//rayHandler.setCombinedMatrix(cam.combined);
-		groundShape.dispose();
 	}
 
 	@Override
 	public void hide() {
-
+		
 	}
 
 	@Override
