@@ -9,9 +9,6 @@ import com.ltkernel.screens.*;
  * Created by esauKang on 5/24/14.
  */
 public class InputManager extends InputAdapter {
-	private Body body;
-	private float speed = 500f;
-	private int pKeycode;
 
 	public static boolean W;
 	public static boolean A;
@@ -19,8 +16,7 @@ public class InputManager extends InputAdapter {
 	public static boolean D;
 	public static boolean SPACE;
 
-	public InputManager(Body body) {
-		this.body = body;
+	public InputManager() {
 	}
 
 	@Override
@@ -64,12 +60,6 @@ public class InputManager extends InputAdapter {
                 SPACE = false;
                 break;
 		}
-		return true;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		System.out.println(screenX + " " + screenY + " " + button);
 		return true;
 	}
 }

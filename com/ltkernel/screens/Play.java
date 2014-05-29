@@ -7,9 +7,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.maps.tiled.renderers.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.utils.*;
-import com.ltkernel.entities.PistolBullet;
 import com.ltkernel.managers.*;
 
 /**
@@ -34,8 +32,109 @@ public class Play implements Screen {
 	private Vector3 touchPos;
 	private float mouseAngle;
 	private Vector3 temp;
+	private Vector2 shoot1, shoot2, collision, normal;
 
 	private final float PIXELS_TO_METERS = 32;
+
+	RayCastCallback callback = new RayCastCallback() {
+		@Override
+		public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+			collision.set(point);
+			Play.this.normal.set(normal).add(point);
+			return 0;
+		}
+	};
+
+	@Override
+	public void show() {
+		logger = new FPSLogger();
+		movement = new Vector2();
+		world = new World(new Vector2(), true);
+		debugRenderer = new Box2DDebugRenderer();
+		sb = new SpriteBatch();
+		cam = new OrthographicCamera(Gdx.graphics.getWidth() / 20, Gdx.graphics.getHeight() / 20);
+		touchPos = new Vector3();
+		camFollow = new Vector3();
+
+		//here
+		shoot1 = new Vector2();
+		shoot2 = new Vector2();
+		collision = new Vector2();
+		normal = new Vector2();
+
+		//here
+
+		Gdx.input.setInputProcessor(new InputManager());
+
+		//person body
+
+		BodyDef personDef = new BodyDef();
+		personDef.type = BodyDef.BodyType.DynamicBody;
+		personDef.position.set(0, 0);
+		personDef.linearDamping = 4f;
+		personDef.angularDamping = 4f;
+
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(1.3f, .6f);
+
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = shape;
+		fixtureDef.density = 100f;
+		fixtureDef.friction = .75f;
+		fixtureDef.restitution = .05f;
+
+		player = world.createBody(personDef);
+		player.createFixture(fixtureDef);
+
+		playerSprite = new Sprite(new Texture("anims/Bodbod.png"));
+		playerSprite.setSize(4, 4);
+		playerSprite.setOrigin(playerSprite.getWidth() / 2, playerSprite.getHeight() / 2);
+		player.setUserData(playerSprite);
+
+		playerHead = new Sprite(new Texture("anims/Bodhead.png"));
+		playerHead.setSize(4, 4);
+		playerHead.setOrigin(playerHead.getWidth() / 2, playerHead.getHeight() / 2);
+
+		shape.dispose();
+
+		//groundbody
+
+		personDef.type = BodyDef.BodyType.StaticBody;
+		personDef.position.set(-1, -1);
+
+		ChainShape groundShape = new ChainShape();
+		groundShape.createChain(new Vector2[] {
+				new Vector2(-20,0), new Vector2(20, 0), new Vector2(25, 10)
+		});
+
+		fixtureDef.shape = groundShape;
+		fixtureDef.friction = .5f;
+		fixtureDef.restitution = 0;
+
+		world.createBody(personDef).createFixture(fixtureDef);
+
+		groundShape.dispose();
+
+		//boxbody
+
+		personDef.type = BodyDef.BodyType.DynamicBody;
+		personDef.position.set(5, 10);
+
+		PolygonShape boxShape = new PolygonShape();
+		boxShape.setAsBox(2, 2);
+
+		fixtureDef.shape = boxShape;
+		fixtureDef.friction = .5f;
+		fixtureDef.restitution = .5f;
+		fixtureDef.density = 50;
+
+		world.createBody(personDef).createFixture(fixtureDef);
+
+		boxShape.dispose();
+
+		//rayHandler = new RayHandler(world);
+		//rayHandler.setCombinedMatrix(cam.combined);
+	}
 
 	@Override
 	public void render(float delta) {
@@ -115,93 +214,17 @@ public class Play implements Screen {
 			movement.x = 0;
 		}
 
-        if(InputManager.SPACE) {
-            PistolBullet bullet = new PistolBullet();
-        }
+		if(Gdx.input.justTouched()) {
+			System.out.println("clicked");
+			world.rayCast(callback, player.getPosition(),
+			new Vector2(MathUtils.cos(player.getAngle()) * 100, MathUtils.sin(player.getAngle() * 100)));
+		}
+
 	}
 
 	@Override
 	public void resize(int width, int height) {
 
-	}
-
-	@Override
-	public void show() {
-		logger = new FPSLogger();
-		movement = new Vector2();
-		world = new World(new Vector2(), true);
-		debugRenderer = new Box2DDebugRenderer();
-		sb = new SpriteBatch();
-		cam = new OrthographicCamera(Gdx.graphics.getWidth() / 20, Gdx.graphics.getHeight() / 20);
-		touchPos = new Vector3();
-		camFollow = new Vector3();
-
-		Gdx.input.setInputProcessor(new InputManager(player));
-
-		//body def
-		BodyDef personDef = new BodyDef();
-		personDef.type = BodyDef.BodyType.DynamicBody;
-		personDef.position.set(0, 0);
-		personDef.linearDamping = 4f;
-		personDef.angularDamping = 4f;
-
-		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(1.3f, .6f);
-
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = shape;
-		fixtureDef.density = 100f;
-		fixtureDef.friction = .75f;
-		fixtureDef.restitution = .05f;
-
-		player = world.createBody(personDef);
-		player.createFixture(fixtureDef);
-
-		playerSprite = new Sprite(new Texture("anims/Bodbod.png"));
-		playerSprite.setSize(4, 4);
-		playerSprite.setOrigin(playerSprite.getWidth() / 2, playerSprite.getHeight() / 2);
-		player.setUserData(playerSprite);
-
-		playerHead = new Sprite(new Texture("anims/Bodhead.png"));
-		playerHead.setSize(4, 4);
-		playerHead.setOrigin(playerHead.getWidth() / 2, playerHead.getHeight() / 2);
-
-		shape.dispose();
-
-		personDef.type = BodyDef.BodyType.StaticBody;
-		personDef.position.set(-1, -1);
-
-		ChainShape groundShape = new ChainShape();
-		groundShape.createChain(new Vector2[] {
-				new Vector2(-20,0), new Vector2(20, 0), new Vector2(25, 10)
-		});
-
-		fixtureDef.shape = groundShape;
-		fixtureDef.friction = .5f;
-		fixtureDef.restitution = 0;
-
-		world.createBody(personDef).createFixture(fixtureDef);
-
-		groundShape.dispose();
-
-		personDef.type = BodyDef.BodyType.KinematicBody;
-		personDef.position.set(5, 10);
-
-		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(2, 2);
-
-		fixtureDef.shape = boxShape;
-		fixtureDef.friction = .5f;
-		fixtureDef.restitution = .5f;
-		fixtureDef.density = 100;
-
-
-		world.createBody(personDef).createFixture(fixtureDef);
-
-		boxShape.dispose();
-
-		//rayHandler = new RayHandler(world);
-		//rayHandler.setCombinedMatrix(cam.combined);
 	}
 
 	@Override
@@ -224,6 +247,7 @@ public class Play implements Screen {
 		world.dispose();
 		debugRenderer.dispose();
 		playerSprite.getTexture().dispose();
+		playerHead.getTexture().dispose();
 	}
 }
 
