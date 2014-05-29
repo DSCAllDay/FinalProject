@@ -13,7 +13,6 @@ public class Person {
 	private float posX;
 	private float posY;
 	private Body player;
-	private World world;
 	private Sprite playerSprite, playerHead;
 
 	public Person(String playerBodyPath, String playerHeadPath, float posX, float posY, World world) {
@@ -62,5 +61,12 @@ public class Person {
 
 	public Sprite getPlayerSprite() {
 		return playerSprite;
+	}
+
+	public void drawHeadOnBody(SpriteBatch sb) {
+		this.playerHead.setY(this.player.getPosition().y - this.playerSprite.getHeight() / 2);
+		this.playerHead.setX(this.player.getPosition().x - this.playerSprite.getWidth() / 2);
+		this.playerHead.setRotation(this.playerSprite.getRotation());
+		this.playerHead.draw(sb);
 	}
 }

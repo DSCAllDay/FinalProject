@@ -24,7 +24,6 @@ public class Play implements Screen {
 	private Box2DDebugRenderer debugRenderer;
 	private Body player;
 	public static Vector2 movement;
-	private Sprite playerSprite, playerHead;
 	private Array<Body> tempBodies = new Array<Body>();
 	private float speed = 500f;
 	private RayHandler rayHandler;
@@ -131,10 +130,7 @@ public class Play implements Screen {
 			}
 		}
 
-		person.getPlayerHead().setY(person.getPlayer().getPosition().y - person.getPlayerSprite().getHeight() / 2);
-		person.getPlayerHead().setX(person.getPlayer().getPosition().x - person.getPlayerSprite().getWidth() / 2);
-		person.getPlayerHead().setRotation(person.getPlayerSprite().getRotation());
-		person.getPlayerHead().draw(sb);
+		person.drawHeadOnBody(sb);
 
 		sb.end();
 		logger.log();
@@ -223,8 +219,8 @@ public class Play implements Screen {
 	public void dispose() {
 		world.dispose();
 		debugRenderer.dispose();
-		playerSprite.getTexture().dispose();
-		playerHead.getTexture().dispose();
+		person.getPlayerSprite().getTexture().dispose();
+		person.getPlayerHead().getTexture().dispose();
 	}
 }
 
