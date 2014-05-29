@@ -32,18 +32,8 @@ public class Play implements Screen {
 	private Vector3 touchPos;
 	private float mouseAngle;
 	private Vector3 temp;
-	private Vector2 shoot1, shoot2, collision, normal;
 
 	private final float PIXELS_TO_METERS = 32;
-
-	RayCastCallback callback = new RayCastCallback() {
-		@Override
-		public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-			collision.set(point);
-			Play.this.normal.set(normal).add(point);
-			return 0;
-		}
-	};
 
 	@Override
 	public void show() {
@@ -55,14 +45,6 @@ public class Play implements Screen {
 		cam = new OrthographicCamera(Gdx.graphics.getWidth() / 20, Gdx.graphics.getHeight() / 20);
 		touchPos = new Vector3();
 		camFollow = new Vector3();
-
-		//here
-		shoot1 = new Vector2();
-		shoot2 = new Vector2();
-		collision = new Vector2();
-		normal = new Vector2();
-
-		//here
 
 		Gdx.input.setInputProcessor(new InputManager());
 
@@ -216,8 +198,26 @@ public class Play implements Screen {
 
 		if(Gdx.input.justTouched()) {
 			System.out.println("clicked");
-			world.rayCast(callback, player.getPosition(),
-			new Vector2(MathUtils.cos(player.getAngle()) * 100, MathUtils.sin(player.getAngle() * 100)));
+
+			BodyDef bulletDef = new BodyDef();
+			bulletDef.type = BodyDef.BodyType.DynamicBody;
+			bulletDef.linearVelocity.set(new Vector2(
+					player.getLinearVelocity().x + (MathUtils.cos(player.getAngle() + MathUtils.PI / 2) * 1000),
+					player.getLinearVelocity().y + (MathUtils.sin(player.getAngle() + MathUtils.PI / 2) * 1000)
+			));
+
+			CircleShape bulletShape = new CircleShape();
+			bulletShape.setRadius(.5f);
+			bulletShape.setPosition(new Vector2(player.getPosition()));
+
+			FixtureDef fixtureDef = new FixtureDef();
+			fixtureDef.density = 1f;
+			fixtureDef.restitution = 0;
+			fixtureDef.shape = bulletShape;
+
+			Body bullet = world.createBody(bulletDef);
+			bullet.isBullet();
+			bullet.createFixture(fixtureDef);
 		}
 
 	}
