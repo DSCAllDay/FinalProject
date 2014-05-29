@@ -198,17 +198,17 @@ public class Play implements Screen {
 		}
 
 		if(Gdx.input.justTouched()) {
-			bulletRad = player.getAngle() + MathUtils.PI / 2 + MathUtils.random(.01f, .25f);
+			bulletRad = player.getAngle() + MathUtils.PI / 2 + MathUtils.random(-.005f, .005f);
 
 			BodyDef bulletDef = new BodyDef();
 			bulletDef.type = BodyDef.BodyType.DynamicBody;
 			bulletDef.linearVelocity.set(new Vector2(
-					player.getLinearVelocity().x + MathUtils.cos(bulletRad) * 5000,
-					player.getLinearVelocity().y + MathUtils.sin(bulletRad) * 5000
+					player.getLinearVelocity().x + MathUtils.cos(bulletRad) * 6000,
+					player.getLinearVelocity().y + MathUtils.sin(bulletRad) * 6000
 			));
 
 			CircleShape bulletShape = new CircleShape();
-			bulletShape.setRadius(.5f);
+			bulletShape.setRadius(.30f);
 			bulletShape.setPosition(new Vector2(player.getPosition()));
 
 			FixtureDef fixtureDef = new FixtureDef();
