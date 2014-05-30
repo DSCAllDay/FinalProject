@@ -3,6 +3,9 @@ package com.ltkernel.entities;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
+import com.ltkernel.items.*;
+
+import java.util.*;
 
 /**
  * Created by esauKang on 5/29/14.
@@ -10,16 +13,17 @@ import com.badlogic.gdx.physics.box2d.*;
 public class Person {
 
 	private float health;
-	private float posX;
-	private float posY;
 	private Body player;
 	private Sprite playerSprite, playerHead;
+	private ArrayList <ProjectileLauncher> weapons;
+	private int currentWeapon;
+
 
 	public Person(String playerBodyPath, String playerHeadPath, float posX, float posY, World world) {
-
-		this.posX = posX;
-		this.posY = posY;
 		this.health = 100;
+		this.weapons = new ArrayList<ProjectileLauncher>();
+		weapons.add(new ProjectileLauncher());
+		this.currentWeapon = 0;
 
 		BodyDef personDef = new BodyDef();
 		personDef.type = BodyDef.BodyType.DynamicBody;
@@ -61,6 +65,24 @@ public class Person {
 
 	public Sprite getPlayerSprite() {
 		return playerSprite;
+	}
+
+
+	public float getHealth() {
+		return health;
+	}
+
+	public void setHealth(float health) {
+		this.health = health;
+	}
+
+	public void changeWeapon() {
+		currentWeapon++;
+		currentWeapon %= weapons.size();
+	}
+
+	public ProjectileLauncher getWeapon() {
+		return weapons.get(currentWeapon);
 	}
 
 	public void drawHeadOnBody(SpriteBatch sb) {

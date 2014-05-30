@@ -1,9 +1,6 @@
 package com.ltkernel.managers;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.physics.box2d.*;
-import com.ltkernel.screens.*;
 
 /**
  * Created by esauKang on 5/24/14.
@@ -14,7 +11,7 @@ public class InputManager extends InputAdapter {
 	public static boolean A;
 	public static boolean S;
 	public static boolean D;
-	public static boolean SPACE;
+	public static boolean E;
 
 	public InputManager() {
 	}
@@ -34,9 +31,9 @@ public class InputManager extends InputAdapter {
 			case Input.Keys.D:
 				D = true;
 				break;
-            case Input.Keys.SPACE:
-                SPACE = true;
-                break;
+			case Input.Keys.E:
+				E = true;
+				break;
 		}
 		return true;
 	}
@@ -56,9 +53,9 @@ public class InputManager extends InputAdapter {
 			case Input.Keys.D:
 				D = false;
 				break;
-            case Input.Keys.SPACE:
-                SPACE = false;
-                break;
+			case Input.Keys.E:
+				E = false;
+				break;
 		}
 		return true;
 	}

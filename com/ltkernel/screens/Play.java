@@ -9,20 +9,23 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.*;
 import com.ltkernel.entities.*;
+import com.ltkernel.items.*;
 import com.ltkernel.managers.*;
+
+import java.util.*;
 
 /**
  * Created by esauKang on 5/24/14.
  */
 public class Play implements Screen {
 
+	public ProjectileLauncher weapon;
 	private SpriteBatch sb;
 	private OrthogonalTiledMapRenderer renderer;
 	private OrthographicCamera cam;
 	private Texture texture;
 	private World world;
 	private Box2DDebugRenderer debugRenderer;
-	private Body player;
 	public static Vector2 movement;
 	private Array<Body> tempBodies = new Array<Body>();
 	private float speed = 500f;
@@ -33,6 +36,7 @@ public class Play implements Screen {
 	private float mouseAngle;
 	private Vector3 temp;
 	private float bulletRad;
+	private Body player;
 	private Person person;
 
 	private final float PIXELS_TO_METERS = 32;
@@ -52,6 +56,7 @@ public class Play implements Screen {
 
 		this.person = new Person("anims/Bodbod.png", "anims/Bodhead.png", 1 , 1, world);
 		this.player = person.getPlayer();
+		weapon = person.getWeapon();
 
 		//groundbody
 
@@ -102,7 +107,7 @@ public class Play implements Screen {
 		debugRenderer.render(world, cam.combined);
 		world.step(1/60f, 8, 3);
 
-		handleInput();
+		handleInput(delta);
 
 		player.applyLinearImpulse(movement, new Vector2(player.getPosition()), true);
 
@@ -152,7 +157,7 @@ public class Play implements Screen {
 		cam.update();
 	}
 
-	private void handleInput() {
+	private void handleInput(float delta) {
 		if(InputManager.W) {
 			movement.y = speed;
 		} else if (InputManager.S) {
@@ -169,28 +174,21 @@ public class Play implements Screen {
 			movement.x = 0;
 		}
 
+		if(person.getWeapon().isReloading) {
+			person.getWeapon().timeElapsed += delta;
+			if(person.getWeapon().timeElapsed >= person.getWeapon().reloadTime) {
+				person.getWeapon().reload();
+			}
+		}
+
+
+		if(!person.getWeapon().isReloading && InputManager.E) {
+			System.out.println("E pressed");
+			person.getWeapon().startReload();
+		}
+
 		if(Gdx.input.justTouched()) {
-			bulletRad = player.getAngle() + MathUtils.PI / 2 + MathUtils.random(-.005f, .005f);
-
-			BodyDef bulletDef = new BodyDef();
-			bulletDef.bullet = true;
-			bulletDef.type = BodyDef.BodyType.DynamicBody;
-			bulletDef.linearVelocity.set(new Vector2(
-					player.getLinearVelocity().x + MathUtils.cos(bulletRad) * 7500,
-					player.getLinearVelocity().y + MathUtils.sin(bulletRad) * 7500
-			));
-
-			CircleShape bulletShape = new CircleShape();
-			bulletShape.setRadius(.30f);
-			bulletShape.setPosition(new Vector2(player.getPosition()));
-
-			FixtureDef fixtureDef = new FixtureDef();
-			fixtureDef.density = .001f;
-			fixtureDef.restitution = 0;
-			fixtureDef.shape = bulletShape;
-
-			Body bullet = world.createBody(bulletDef);
-			bullet.createFixture(fixtureDef);
+			weapon.fire(player, world, bulletRad);
 		}
 	}
 
