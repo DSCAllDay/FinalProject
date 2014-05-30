@@ -173,10 +173,11 @@ public class Play implements Screen {
 			bulletRad = player.getAngle() + MathUtils.PI / 2 + MathUtils.random(-.005f, .005f);
 
 			BodyDef bulletDef = new BodyDef();
+			bulletDef.bullet = true;
 			bulletDef.type = BodyDef.BodyType.DynamicBody;
 			bulletDef.linearVelocity.set(new Vector2(
-					player.getLinearVelocity().x + MathUtils.cos(bulletRad) * 6000,
-					player.getLinearVelocity().y + MathUtils.sin(bulletRad) * 6000
+					player.getLinearVelocity().x + MathUtils.cos(bulletRad) * 7500,
+					player.getLinearVelocity().y + MathUtils.sin(bulletRad) * 7500
 			));
 
 			CircleShape bulletShape = new CircleShape();
@@ -189,10 +190,8 @@ public class Play implements Screen {
 			fixtureDef.shape = bulletShape;
 
 			Body bullet = world.createBody(bulletDef);
-			bullet.isBullet();
 			bullet.createFixture(fixtureDef);
 		}
-
 	}
 
 	@Override
