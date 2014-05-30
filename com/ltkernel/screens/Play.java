@@ -8,22 +8,25 @@ import com.badlogic.gdx.maps.tiled.renderers.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.*;
+import com.ltkernel.entities.*;
+import com.ltkernel.items.*;
 import com.ltkernel.managers.*;
+
+import java.util.*;
 
 /**
  * Created by esauKang on 5/24/14.
  */
 public class Play implements Screen {
 
+	public ProjectileLauncher weapon;
 	private SpriteBatch sb;
 	private OrthogonalTiledMapRenderer renderer;
 	private OrthographicCamera cam;
 	private Texture texture;
 	private World world;
 	private Box2DDebugRenderer debugRenderer;
-	private Body player;
 	public static Vector2 movement;
-	private Sprite playerSprite, playerHead;
 	private Array<Body> tempBodies = new Array<Body>();
 	private float speed = 500f;
 	private RayHandler rayHandler;
@@ -33,6 +36,8 @@ public class Play implements Screen {
 	private float mouseAngle;
 	private Vector3 temp;
 	private float bulletRad;
+	private Body player;
+	private Person person;
 
 	private final float PIXELS_TO_METERS = 32;
 
@@ -49,39 +54,13 @@ public class Play implements Screen {
 
 		Gdx.input.setInputProcessor(new InputManager());
 
-		//person body
-
-		BodyDef personDef = new BodyDef();
-		personDef.type = BodyDef.BodyType.DynamicBody;
-		personDef.position.set(0, 0);
-		personDef.linearDamping = 4f;
-		personDef.angularDamping = 4f;
-
-		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(1.3f, .6f);
-
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = shape;
-		fixtureDef.density = 100f;
-		fixtureDef.friction = .75f;
-		fixtureDef.restitution = .05f;
-
-		player = world.createBody(personDef);
-		player.createFixture(fixtureDef);
-
-		playerSprite = new Sprite(new Texture("anims/Bodbod.png"));
-		playerSprite.setSize(4, 4);
-		playerSprite.setOrigin(playerSprite.getWidth() / 2, playerSprite.getHeight() / 2);
-		player.setUserData(playerSprite);
-
-		playerHead = new Sprite(new Texture("anims/Bodhead.png"));
-		playerHead.setSize(4, 4);
-		playerHead.setOrigin(playerHead.getWidth() / 2, playerHead.getHeight() / 2);
-
-		shape.dispose();
+		this.person = new Person("anims/Bodbod.png", "anims/Bodhead.png", 1 , 1, world);
+		this.player = person.getPlayer();
+		weapon = person.getWeapon();
 
 		//groundbody
 
+		BodyDef personDef = new BodyDef();
 		personDef.type = BodyDef.BodyType.StaticBody;
 		personDef.position.set(-1, -1);
 
@@ -90,6 +69,7 @@ public class Play implements Screen {
 				new Vector2(-20,0), new Vector2(20, 0), new Vector2(25, 10)
 		});
 
+		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = groundShape;
 		fixtureDef.friction = .5f;
 		fixtureDef.restitution = 0;
@@ -127,7 +107,7 @@ public class Play implements Screen {
 		debugRenderer.render(world, cam.combined);
 		world.step(1/60f, 8, 3);
 
-		handleInput();
+		handleInput(delta);
 
 		player.applyLinearImpulse(movement, new Vector2(player.getPosition()), true);
 
@@ -155,10 +135,7 @@ public class Play implements Screen {
 			}
 		}
 
-		playerHead.setY(player.getPosition().y - playerSprite.getHeight() / 2);
-		playerHead.setX(player.getPosition().x - playerSprite.getWidth() / 2);
-		playerHead.setRotation(playerSprite.getRotation());
-		playerHead.draw(sb);
+		person.drawHeadOnBody(sb);
 
 		sb.end();
 		logger.log();
@@ -180,7 +157,7 @@ public class Play implements Screen {
 		cam.update();
 	}
 
-	private void handleInput() {
+	private void handleInput(float delta) {
 		if(InputManager.W) {
 			movement.y = speed;
 		} else if (InputManager.S) {
@@ -197,30 +174,22 @@ public class Play implements Screen {
 			movement.x = 0;
 		}
 
-		if(Gdx.input.justTouched()) {
-			bulletRad = player.getAngle() + MathUtils.PI / 2 + MathUtils.random(-.005f, .005f);
-
-			BodyDef bulletDef = new BodyDef();
-			bulletDef.type = BodyDef.BodyType.DynamicBody;
-			bulletDef.linearVelocity.set(new Vector2(
-					player.getLinearVelocity().x + MathUtils.cos(bulletRad) * 6000,
-					player.getLinearVelocity().y + MathUtils.sin(bulletRad) * 6000
-			));
-
-			CircleShape bulletShape = new CircleShape();
-			bulletShape.setRadius(.30f);
-			bulletShape.setPosition(new Vector2(player.getPosition()));
-
-			FixtureDef fixtureDef = new FixtureDef();
-			fixtureDef.density = .001f;
-			fixtureDef.restitution = 0;
-			fixtureDef.shape = bulletShape;
-
-			Body bullet = world.createBody(bulletDef);
-			bullet.isBullet();
-			bullet.createFixture(fixtureDef);
+		if(person.getWeapon().isReloading) {
+			person.getWeapon().timeElapsed += delta;
+			if(person.getWeapon().timeElapsed >= person.getWeapon().reloadTime) {
+				person.getWeapon().reload();
+			}
 		}
 
+
+		if(!person.getWeapon().isReloading && InputManager.E) {
+			System.out.println("E pressed");
+			person.getWeapon().startReload();
+		}
+
+		if(Gdx.input.justTouched()) {
+			weapon.fire(player, world, bulletRad);
+		}
 	}
 
 	@Override
@@ -247,8 +216,8 @@ public class Play implements Screen {
 	public void dispose() {
 		world.dispose();
 		debugRenderer.dispose();
-		playerSprite.getTexture().dispose();
-		playerHead.getTexture().dispose();
+		person.getPlayerSprite().getTexture().dispose();
+		person.getPlayerHead().getTexture().dispose();
 	}
 }
 
