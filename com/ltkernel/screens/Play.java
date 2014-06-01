@@ -4,6 +4,7 @@ import box2dLight.*;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
@@ -18,7 +19,8 @@ import java.util.*;
  * Created by esauKang on 5/24/14.
  */
 public class Play implements Screen {
-
+	
+	private TiledMap map;
 	public ProjectileLauncher weapon;
 	private SpriteBatch sb;
 	private OrthogonalTiledMapRenderer renderer;
@@ -48,9 +50,12 @@ public class Play implements Screen {
 		world = new World(new Vector2(), true);
 		debugRenderer = new Box2DDebugRenderer();
 		sb = new SpriteBatch();
-		cam = new OrthographicCamera(Gdx.graphics.getWidth() / 20, Gdx.graphics.getHeight() / 20);
+		cam = new OrthographicCamera(Gdx.graphics.getWidth() / 22, Gdx.graphics.getHeight() / 22);
 		touchPos = new Vector3();
 		camFollow = new Vector3();
+		TmxMapLoader loader = new TmxMapLoader();
+		map = loader.load("Fixedtest.tmx");
+		renderer = new OrthogonalTiledMapRenderer(map, .06f);                                             //scale
 
 		Gdx.input.setInputProcessor(new InputManager());
 
@@ -104,6 +109,8 @@ public class Play implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
+		renderer.render();
+		renderer.setView(cam);
 		debugRenderer.render(world, cam.combined);
 		world.step(1/60f, 8, 3);
 
@@ -218,6 +225,8 @@ public class Play implements Screen {
 		debugRenderer.dispose();
 		person.getPlayerSprite().getTexture().dispose();
 		person.getPlayerHead().getTexture().dispose();
+		map.dispose();
+		renderer.dispose();
 	}
 }
 
