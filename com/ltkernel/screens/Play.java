@@ -54,12 +54,12 @@ public class Play implements Screen {
 		touchPos = new Vector3();
 		camFollow = new Vector3();
 		TmxMapLoader loader = new TmxMapLoader();
-		map = loader.load("Fixedtest.tmx");
+		map = loader.load("FixedTest.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, .06f);                                             //scale
 
 		Gdx.input.setInputProcessor(new InputManager());
 
-		this.person = new Person("anims/Bodbod.png", "anims/Bodhead.png", 1 , 1, world);
+		this.person = new Person("Bodbod.png", "Bodhead.png", 1 , 1, world);
 		this.player = person.getPlayer();
 		weapon = person.getWeapon();
 
@@ -190,7 +190,6 @@ public class Play implements Screen {
 
 
 		if(!person.getWeapon().isReloading && InputManager.E) {
-			System.out.println("E pressed");
 			person.getWeapon().startReload();
 		}
 
