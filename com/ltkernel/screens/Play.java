@@ -40,14 +40,21 @@ public class Play implements Screen {
 	private float bulletRad;
 	private Body player;
 	private Person person;
+    public static Array<Body> bodiesToDestroy;
+    public static Array<ProjectileLauncher.Bullet> bullets;
+    public CollisionManager collisionManager;
 
 	private final float PIXELS_TO_METERS = 32;
 
 	@Override
 	public void show() {
+        bullets = new Array<ProjectileLauncher.Bullet>();
+        bodiesToDestroy = new Array<Body>();
 		logger = new FPSLogger();
 		movement = new Vector2();
 		world = new World(new Vector2(), true);
+        collisionManager = new CollisionManager();
+        world.setContactListener(collisionManager);
 		debugRenderer = new Box2DDebugRenderer();
 		sb = new SpriteBatch();
 		cam = new OrthographicCamera(Gdx.graphics.getWidth() / 22, Gdx.graphics.getHeight() / 22);
@@ -108,14 +115,14 @@ public class Play implements Screen {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-
 		renderer.render();
 		renderer.setView(cam);
 		debugRenderer.render(world, cam.combined);
 		world.step(1/60f, 8, 3);
-
+        if (bodiesToDestroy.size > 0) {
+            destroyBodies();
+        }
 		handleInput(delta);
-
 		player.applyLinearImpulse(movement, new Vector2(player.getPosition()), true);
 
 		updateCamera();
@@ -139,7 +146,9 @@ public class Play implements Screen {
 				sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
 				sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
 				sprite.draw(sb);
-			}
+			} else if (body.getUserData() != null && body.getUserData() instanceof ProjectileLauncher.Bullet) {
+                ((ProjectileLauncher.Bullet)(body.getUserData())).updateWaitTime();
+            }
 		}
 
 		person.drawHeadOnBody(sb);
@@ -227,5 +236,13 @@ public class Play implements Screen {
 		map.dispose();
 		renderer.dispose();
 	}
+
+    private void destroyBodies() {
+        for (int i = 0; i < bodiesToDestroy.size; i++) {
+            world.destroyBody(bodiesToDestroy.get(i));
+            bodiesToDestroy.get(i).setUserData(null);
+            bodiesToDestroy.removeIndex(i);
+        }
+    }
 }
 
