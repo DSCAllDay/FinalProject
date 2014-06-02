@@ -17,14 +17,16 @@ public class CollisionManager implements ContactListener {
         Object userData2 = bodyB.getUserData();
         if (userData1 != null && userData2 != null && userData1 instanceof Person && userData2 instanceof ProjectileLauncher.Bullet) {
             ((Person)(userData1)).setHealth(((Person)(userData1)).getHealth() - randomLoss(20, 30));
-        //    Play.bodiesToDestroy.add(bodyB);
+            Play.bodiesToDestroy.add(bodyB);
         } else if (userData1 != null && userData2 != null && userData1 instanceof ProjectileLauncher.Bullet && userData2 instanceof Person) {
             ((Person)(userData2)).setHealth(((Person)(userData2)).getHealth() - randomLoss(20, 30));
-        //    Play.bodiesToDestroy.add(bodyA);
-        } else if (userData1 != null && userData2 != null && userData1 instanceof ProjectileLauncher.Bullet && !(userData2 instanceof ProjectileLauncher.Bullet)) {
-        //    Play.bodiesToDestroy.add(bodyA);
-        } else if (userData1 != null && userData2 != null && userData2 instanceof ProjectileLauncher.Bullet && !(userData1 instanceof ProjectileLauncher.Bullet)) {
-        //    Play.bodiesToDestroy.add(bodyB);
+            Play.bodiesToDestroy.add(bodyA);
+        }  else if (userData1 != null && userData2 != null && userData1 instanceof ProjectileLauncher.Bullet && userData2 instanceof ProjectileLauncher.Bullet) {
+            return;
+        } else if (userData1 != null && userData1 instanceof ProjectileLauncher.Bullet) {
+            Play.bodiesToDestroy.add(bodyA);
+        } else if (userData2 != null && userData2 instanceof ProjectileLauncher.Bullet) {
+            Play.bodiesToDestroy.add(bodyB);
         }
     }
 
