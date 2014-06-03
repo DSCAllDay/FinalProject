@@ -31,7 +31,7 @@ public class InputManager extends InputAdapter {
 			case Input.Keys.D:
 				D = true;
 				break;
-			case Input.Keys.E:
+			case Input.Keys.R:
 				R = true;
 				break;
 		}
@@ -53,7 +53,7 @@ public class InputManager extends InputAdapter {
 			case Input.Keys.D:
 				D = false;
 				break;
-			case Input.Keys.E:
+			case Input.Keys.R:
 				R = false;
 				break;
 		}
