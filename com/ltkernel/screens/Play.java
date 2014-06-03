@@ -240,7 +240,6 @@ public class Play implements Screen {
     private void destroyBodies() {
         for (int i = 0; i < bodiesToDestroy.size; i++) {
             world.destroyBody(bodiesToDestroy.get(i));
-            bodiesToDestroy.get(i).setUserData(null);
             bodiesToDestroy.removeIndex(i);
         }
     }
