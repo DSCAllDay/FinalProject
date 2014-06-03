@@ -19,7 +19,7 @@ public class Person {
 	private int currentWeapon;
 
 
-	public Person(String playerBodyPath, String playerHeadPath, float posX, float posY, World world) {
+	public Person(String playerImgPath, float posX, float posY, World world) {
 		this.health = 100;
 		this.weapons = new ArrayList<ProjectileLauncher>();
 		weapons.add(new ProjectileLauncher());
@@ -43,16 +43,16 @@ public class Person {
 		player = world.createBody(personDef);
 		player.createFixture(fixtureDef);
 
-		playerSprite = new Sprite(new Texture(playerBodyPath));
+		playerSprite = new Sprite(new Texture(playerImgPath));
 		playerSprite.setSize(4, 4);
 		playerSprite.setOrigin(playerSprite.getWidth() / 2, playerSprite.getHeight() / 2);
 		player.setUserData(playerSprite);
 
-		playerHead = new Sprite(new Texture(playerHeadPath));
-		playerHead.setSize(4, 4);
-		playerHead.setOrigin(playerHead.getWidth() / 2, playerHead.getHeight() / 2);
-        player.setUserData(this);
-		shape.dispose();
+//		playerHead = new Sprite(new Texture(playerHeadPath));
+//		playerHead.setSize(4, 4);
+//		playerHead.setOrigin(playerHead.getWidth() / 2, playerHead.getHeight() / 2);
+//        player.setUserData(this);
+//		shape.dispose();
 	}
 
 	public Body getPlayer() {

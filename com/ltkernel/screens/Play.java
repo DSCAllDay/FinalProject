@@ -68,7 +68,7 @@ public class Play implements Screen {
 
 		Gdx.input.setInputProcessor(new InputManager());
 
-		this.person = new Person("Bodbod.png", "Bodhead.png", 1 , 1, world);
+		this.person = new Person("traineeglock.png", 1 , 1, world);
 		this.player = person.getPlayer();
 		weapon = person.getWeapon();
 		parser.load(world, map);
@@ -135,7 +135,7 @@ public class Play implements Screen {
 
 		mouseAngle = MathUtils.atan2(temp.y - player.getPosition().y, temp.x - player.getPosition().x);
 
-		player.setTransform(new Vector2(player.getPosition().x, player.getPosition().y), mouseAngle + MathUtils.PI / 2);
+		player.setTransform(new Vector2(player.getPosition().x, player.getPosition().y), mouseAngle + 3 * MathUtils.PI / 2);
 
 		sb.setProjectionMatrix(cam.combined);
 		//rayHandler.updateAndRender();
@@ -153,8 +153,6 @@ public class Play implements Screen {
                 ((ProjectileLauncher.Bullet)(body.getUserData())).updateWaitTime();
             }
 		}
-
-		person.drawHeadOnBody(sb);
 
 		sb.end();
 		logger.log();

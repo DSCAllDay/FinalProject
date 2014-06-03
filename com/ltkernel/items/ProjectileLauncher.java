@@ -112,7 +112,7 @@ public class ProjectileLauncher {
 		}
 
 		public void ignite(Body player, World world) {
-			bulletRad = player.getAngle() +  3 * MathUtils.PI / 2 + MathUtils.random(-ProjectileLauncher.this.spread, ProjectileLauncher.this.spread);
+			bulletRad = player.getAngle() +  MathUtils.PI / 2 + MathUtils.random(-ProjectileLauncher.this.spread, ProjectileLauncher.this.spread);
 			this.bulletShape.setPosition(new Vector2(player.getPosition().x + MathUtils.cos(bulletRad), player.getPosition().y + MathUtils.sin(bulletRad)));
 			this.bulletDef.linearVelocity.set(new Vector2(
 					player.getLinearVelocity().x + MathUtils.cos(bulletRad) * 7500,
