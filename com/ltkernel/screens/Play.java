@@ -14,8 +14,6 @@ import com.ltkernel.items.*;
 import com.ltkernel.managers.*;
 import net.dermetfan.utils.libgdx.box2d.*;
 
-import java.util.*;
-
 /**
  * Created by esauKang on 5/24/14.
  */
@@ -41,14 +39,19 @@ public class Play implements Screen {
 	private float bulletRad;
 	private Body player;
 	private Person person;
+    public static Array<Enemy> enemies;
     public static Array<Body> bodiesToDestroy;
     public static Array<ProjectileLauncher.Bullet> bullets;
     public CollisionManager collisionManager;
+    private int[][] spawnPoints;
 
 	private final float PIXELS_TO_METERS = 32;
 
 	@Override
 	public void show() {
+        spawnPoints = new int[2][5];
+        spawnPoints = giveSpawnPoints();
+        enemies = new Array<Enemy>();
         bullets = new Array<ProjectileLauncher.Bullet>();
         bodiesToDestroy = new Array<Body>();
 		logger = new FPSLogger();
@@ -65,11 +68,11 @@ public class Play implements Screen {
 		TmxMapLoader loader = new TmxMapLoader();
 		map = loader.load("TR_CONCRETE_TEST2.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, .06f);                                             //scale
-
+        createEnemies();
 		Gdx.input.setInputProcessor(new InputManager());
 
 		this.person = new Person("traineeglock.png", 1 , 1, world);
-		this.player = person.getPlayer();
+		this.player = person.getBody();
 		weapon = person.getWeapon();
 		parser.load(world, map);
 
@@ -199,7 +202,7 @@ public class Play implements Screen {
 		}
 
 
-		if(!person.getWeapon().isReloading && InputManager.E) {
+		if(!person.getWeapon().isReloading && InputManager.R) {
 			person.getWeapon().startReload();
 		}
 
@@ -232,8 +235,8 @@ public class Play implements Screen {
 	public void dispose() {
 		world.dispose();
 		debugRenderer.dispose();
-		person.getPlayerSprite().getTexture().dispose();
-		person.getPlayerHead().getTexture().dispose();
+		person.getBodySprite().getTexture().dispose();
+		person.getBodyHead().getTexture().dispose();
 		map.dispose();
 		renderer.dispose();
 	}
@@ -243,6 +246,19 @@ public class Play implements Screen {
             world.destroyBody(bodiesToDestroy.get(i));
             bodiesToDestroy.removeIndex(i);
         }
+    }
+
+    private void createEnemies() {
+        for (int i = 0; i < 5; i++) {
+        //    Enemy enemy = new Enemy("traineeglock.png", spawnPoints[0][i], spawnPoints[1][i], world);
+            Enemy enemy = new Enemy("traineeglock.png", 5*i, 5*i, world);
+        }
+    }
+
+    private int[][] giveSpawnPoints() {
+        int[][] spawnPoints = new int[2][5];
+        // set each one, the first [] is 0 or 1: x or y
+        return spawnPoints;
     }
 }
 

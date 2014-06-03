@@ -55,18 +55,17 @@ public class Person {
 //		shape.dispose();
 	}
 
-	public Body getPlayer() {
+	public Body getBody() {
 		return player;
 	}
 
-	public Sprite getPlayerHead() {
+	public Sprite getBodyHead() {
 		return playerHead;
 	}
 
-	public Sprite getPlayerSprite() {
+	public Sprite getBodySprite() {
 		return playerSprite;
 	}
-
 
 	public float getHealth() {
 		return health;

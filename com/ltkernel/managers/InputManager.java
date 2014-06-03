@@ -11,7 +11,7 @@ public class InputManager extends InputAdapter {
 	public static boolean A;
 	public static boolean S;
 	public static boolean D;
-	public static boolean E;
+	public static boolean R;
 
 	public InputManager() {
 	}
@@ -32,7 +32,7 @@ public class InputManager extends InputAdapter {
 				D = true;
 				break;
 			case Input.Keys.E:
-				E = true;
+				R = true;
 				break;
 		}
 		return true;
@@ -54,7 +54,7 @@ public class InputManager extends InputAdapter {
 				D = false;
 				break;
 			case Input.Keys.E:
-				E = false;
+				R = false;
 				break;
 		}
 		return true;
