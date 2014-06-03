@@ -51,7 +51,7 @@ public class Person {
 		playerHead = new Sprite(new Texture(playerHeadPath));
 		playerHead.setSize(4, 4);
 		playerHead.setOrigin(playerHead.getWidth() / 2, playerHead.getHeight() / 2);
-
+        player.setUserData(this);
 		shape.dispose();
 	}
 

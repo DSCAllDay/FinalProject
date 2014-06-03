@@ -4,6 +4,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ltkernel.entities.*;
+import com.ltkernel.screens.Play;
 
 import java.util.*;
 
@@ -19,7 +20,6 @@ public class ProjectileLauncher {
 	public boolean isReloading;
 	public float timeElapsed;
 	public float spread;
-	public ArrayList<Bullet> bullets;
 
 	public ProjectileLauncher() {
 		currentBullets = 8;
@@ -63,7 +63,7 @@ public class ProjectileLauncher {
 		isReloading = false;
 	}
 
-	class Bullet {
+	public class Bullet {
 		public float timeAlive;
 		public float damage;
 		public boolean shouldDelete;
@@ -71,6 +71,8 @@ public class ProjectileLauncher {
 		public BodyDef bulletDef;
 		public CircleShape bulletShape;
 		public FixtureDef fixtureDef;
+        private Body body;
+        private int waitTime;
 
 		public Bullet() {
 			this.shouldDelete = false;
@@ -87,6 +89,8 @@ public class ProjectileLauncher {
 			this.fixtureDef.density = .001f;
 			this.fixtureDef.restitution = 0;
 			this.fixtureDef.shape = bulletShape;
+            Play.bullets.add(this);
+            waitTime = 120;
 		}
 		public Bullet(float damage) {
 			this.shouldDelete = false;
@@ -103,18 +107,36 @@ public class ProjectileLauncher {
 			this.fixtureDef.density = .001f;
 			this.fixtureDef.restitution = 0;
 			this.fixtureDef.shape = bulletShape;
+            Play.bullets.add(this);
+            waitTime = 120;
 		}
 
 		public void ignite(Body player, World world) {
-			bulletRad = player.getAngle() + MathUtils.PI / 2 + MathUtils.random(-ProjectileLauncher.this.spread, ProjectileLauncher.this.spread);
-
-			this.bulletShape.setPosition(new Vector2(player.getPosition()));
+			bulletRad = player.getAngle() +  3 * MathUtils.PI / 2 + MathUtils.random(-ProjectileLauncher.this.spread, ProjectileLauncher.this.spread);
+			this.bulletShape.setPosition(new Vector2(player.getPosition().x + MathUtils.cos(bulletRad), player.getPosition().y + MathUtils.sin(bulletRad)));
 			this.bulletDef.linearVelocity.set(new Vector2(
 					player.getLinearVelocity().x + MathUtils.cos(bulletRad) * 7500,
 					player.getLinearVelocity().y + MathUtils.sin(bulletRad) * 7500
 			));
 			Body bullet = world.createBody(bulletDef);
 			bullet.createFixture(fixtureDef);
+            body = bullet;
+            body.setUserData(this);
 		}
-	}
+
+        public void updateWaitTime() {
+            waitTime--;
+            if (waitTime <= 0) {
+                Play.bodiesToDestroy.add(body);
+            }
+        }
+
+        public int getWaitTime() {
+            return waitTime;
+        }
+
+        public Body getBody() {
+            return body;
+        }
+    }
 }
