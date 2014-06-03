@@ -50,7 +50,7 @@ public class Play implements Screen {
 	@Override
 	public void show() {
         spawnPoints = new int[2][5];
-        spawnPoints = giveSpawnPoints();
+        giveSpawnPoints();
         enemies = new Array<Enemy>();
         bullets = new Array<ProjectileLauncher.Bullet>();
         bodiesToDestroy = new Array<Body>();
@@ -255,10 +255,8 @@ public class Play implements Screen {
         }
     }
 
-    private int[][] giveSpawnPoints() {
-        int[][] spawnPoints = new int[2][5];
+    private void giveSpawnPoints() {
         // set each one, the first [] is 0 or 1: x or y
-        return spawnPoints;
     }
 }
 
