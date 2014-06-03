@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.*;
 import com.ltkernel.entities.*;
 import com.ltkernel.items.*;
 import com.ltkernel.managers.*;
+import net.dermetfan.utils.libgdx.box2d.*;
 
 import java.util.*;
 
@@ -49,12 +50,13 @@ public class Play implements Screen {
 		movement = new Vector2();
 		world = new World(new Vector2(), true);
 		debugRenderer = new Box2DDebugRenderer();
+		Box2DMapObjectParser parser = new Box2DMapObjectParser(.06f);
 		sb = new SpriteBatch();
 		cam = new OrthographicCamera(Gdx.graphics.getWidth() / 22, Gdx.graphics.getHeight() / 22);
 		touchPos = new Vector3();
 		camFollow = new Vector3();
 		TmxMapLoader loader = new TmxMapLoader();
-		map = loader.load("FixedTest.tmx");
+		map = loader.load("TR_CONCRETE_TEST2.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, .06f);                                             //scale
 
 		Gdx.input.setInputProcessor(new InputManager());
@@ -62,6 +64,7 @@ public class Play implements Screen {
 		this.person = new Person("Bodbod.png", "Bodhead.png", 1 , 1, world);
 		this.player = person.getPlayer();
 		weapon = person.getWeapon();
+		parser.load(world, map);
 
 		//groundbody
 
