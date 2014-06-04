@@ -1,10 +1,14 @@
 package com.ltkernel.items;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ltkernel.entities.*;
 import com.ltkernel.screens.Play;
+import net.dermetfan.utils.libgdx.graphics.Box2DSprite;
+import net.dermetfan.utils.libgdx.graphics.*;
 
 import java.util.*;
 
@@ -73,6 +77,8 @@ public class ProjectileLauncher {
 		public FixtureDef fixtureDef;
         private Body body;
         private int waitTime;
+		public Sprite bulletSprite;
+		private final String PATH = "TracerRed.png";
 
 		public Bullet() {
 			this.shouldDelete = false;
@@ -113,14 +119,18 @@ public class ProjectileLauncher {
 
 		public void ignite(Body player, World world) {
 			bulletRad = player.getAngle() +  MathUtils.PI / 2 + MathUtils.random(-ProjectileLauncher.this.spread, ProjectileLauncher.this.spread);
-			this.bulletShape.setPosition(new Vector2(player.getPosition().x + MathUtils.cos(bulletRad), player.getPosition().y + MathUtils.sin(bulletRad)));
+			this.bulletDef.position.set(new Vector2(player.getPosition().x + MathUtils.cos(bulletRad), player.getPosition().y + MathUtils.sin(bulletRad)));
 			this.bulletDef.linearVelocity.set(new Vector2(
 					player.getLinearVelocity().x + MathUtils.cos(bulletRad) * 7500,
 					player.getLinearVelocity().y + MathUtils.sin(bulletRad) * 7500
 			));
-			Body bullet = world.createBody(bulletDef);
-			bullet.createFixture(fixtureDef);
-            body = bullet;
+			body = world.createBody(bulletDef);
+			body.createFixture(fixtureDef);
+			bulletSprite = new Sprite(new Texture(PATH));
+			bulletSprite.setSize(4, 4);
+			bulletSprite.setOrigin(
+					bulletSprite.getWidth() /  2, bulletSprite.getHeight() / 2);
+			bulletSprite.setRotation(player.getAngle() * MathUtils.radiansToDegrees);
             body.setUserData(this);
 		}
 
@@ -138,5 +148,9 @@ public class ProjectileLauncher {
         public Body getBody() {
             return body;
         }
-    }
+
+		public Sprite getBulletSprite() {
+			return bulletSprite;
+		}
+	}
 }

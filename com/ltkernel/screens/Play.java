@@ -13,6 +13,7 @@ import com.ltkernel.entities.*;
 import com.ltkernel.items.*;
 import com.ltkernel.managers.*;
 import net.dermetfan.utils.libgdx.box2d.*;
+import net.dermetfan.utils.libgdx.graphics.*;
 
 /**
  * Created by esauKang on 5/24/14.
@@ -121,17 +122,16 @@ public class Play implements Screen {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-		renderer.render();
+		updateCamera();
 		renderer.setView(cam);
+		renderer.render();
 		debugRenderer.render(world, cam.combined);
-		world.step(1/60f, 8, 3);
+		world.step(1 / 60f, 8, 3);
         if (bodiesToDestroy.size > 0) {
             destroyBodies();
         }
 		handleInput(delta);
 		player.applyLinearImpulse(movement, new Vector2(player.getPosition()), true);
-
-		updateCamera();
 
 		touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 		temp = cam.unproject(touchPos);
@@ -153,10 +153,13 @@ public class Play implements Screen {
 				sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
 				sprite.draw(sb);
 			} else if (body.getUserData() != null && body.getUserData() instanceof ProjectileLauncher.Bullet) {
-                ((ProjectileLauncher.Bullet)(body.getUserData())).updateWaitTime();
-            }
+				Sprite sprite = ((ProjectileLauncher.Bullet) body.getUserData()).bulletSprite;
+				sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
+				System.out.println(body.getPosition());
+				sprite.draw(sb);
+				((ProjectileLauncher.Bullet) (body.getUserData())).updateWaitTime();
+			}
 		}
-
 		sb.end();
 		logger.log();
 	}
