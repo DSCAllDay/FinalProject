@@ -70,7 +70,6 @@ public class ProjectileLauncher {
 	public class Bullet {
 		public float timeAlive;
 		public float damage;
-		public boolean shouldDelete;
 		public float bulletRad;
 		public BodyDef bulletDef;
 		public CircleShape bulletShape;
@@ -81,7 +80,6 @@ public class ProjectileLauncher {
 		private final String PATH = "TracerRed.png";
 
 		public Bullet() {
-			this.shouldDelete = false;
 			this.timeAlive = 2;
 			this.damage = 34;
 			this.bulletDef = new BodyDef();
@@ -99,7 +97,6 @@ public class ProjectileLauncher {
             waitTime = 120;
 		}
 		public Bullet(float damage) {
-			this.shouldDelete = false;
 			this.timeAlive = 2;
 			this.damage = damage;
 			this.bulletDef = new BodyDef();
