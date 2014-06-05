@@ -153,12 +153,21 @@ public class Play implements Screen {
 				sprite.draw(sb);
 			} else if (body.getUserData() != null && body.getUserData() instanceof ProjectileLauncher.Bullet) {
                 ProjectileLauncher.Bullet bullet = (ProjectileLauncher.Bullet)(body.getUserData());
-            //    if (bullet.getWaitTime() >= 0 && bullet.getWaitTime() <= 100) {
-                    Sprite flashBullet = new Sprite(new Texture("flash2test.png"));
-                    flashBullet.setPosition(player.getPosition().x - flashBullet.getWidth() / 2, player.getPosition().y - flashBullet.getHeight() / 2);
-                    flashBullet.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
-                    flashBullet.draw(sb);
-             //  }
+                Sprite flashBullet = new Sprite(new Texture("flash2test.png"));
+				float angle = player.getAngle() * MathUtils.radiansToDegrees - 270;
+				if(angle < 0) {
+					angle += 360;
+				}
+				angle = angle * MathUtils.degreesToRadians;
+				flashBullet.setRotation(player.getAngle() * MathUtils.radiansToDegrees);
+
+				flashBullet.setPosition(player.getPosition().x - flashBullet.getWidth() / 2, player.getPosition().y - flashBullet.getHeight() / 2);
+
+				flashBullet.translateX(2.65f * MathUtils.cos(angle));
+				flashBullet.translateY(2.65f * MathUtils.sin(angle));
+
+				flashBullet.setScale(.15f);
+                flashBullet.draw(sb);
 				Sprite sprite = ((ProjectileLauncher.Bullet) body.getUserData()).bulletSprite;
 				sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
 				sprite.draw(sb);
