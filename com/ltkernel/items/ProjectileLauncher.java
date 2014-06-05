@@ -30,7 +30,7 @@ public class ProjectileLauncher {
 		currentBullets = 8;
 		totalBullets = 64;
 		bulletsPerClip = 8;
-		reloadTime = 1;
+		reloadTime = 1.5f;
 		timeElapsed = 0;
 		spread = .005f;
 	}
@@ -55,6 +55,7 @@ public class ProjectileLauncher {
 	}
 
 	public void startReload() {
+		JukeBox.play("reload");
 		isReloading = true;
 	}
 
@@ -78,7 +79,7 @@ public class ProjectileLauncher {
         private Body body;
         private int waitTime;
 		public Sprite bulletSprite;
-		private final String PATH = "TracerRed.png";
+		private final String PATH = "Bullet.png";
         public int justFired;
 
 		public Bullet() {
@@ -128,7 +129,7 @@ public class ProjectileLauncher {
 			body = world.createBody(bulletDef);
 			body.createFixture(fixtureDef);
 			bulletSprite = new Sprite(new Texture(PATH));
-			bulletSprite.setSize(4, 4);
+			bulletSprite.setSize(.25f, .25f);
 			bulletSprite.setOrigin(
 					bulletSprite.getWidth() /  2, bulletSprite.getHeight() / 2);
 			bulletSprite.setRotation(player.getAngle() * MathUtils.radiansToDegrees);

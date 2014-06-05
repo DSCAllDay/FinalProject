@@ -68,51 +68,15 @@ public class Play implements Screen {
 		TmxMapLoader loader = new TmxMapLoader();
 		map = loader.load("TR_Concrete/TR_CONCRETE_TEST2.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, .06f);                                             //scale
-        createEnemies();
+        //createEnemies();
 		Gdx.input.setInputProcessor(new InputManager());
-        JukeBox.load("gunshot", "gunshot.mp3");
+        JukeBox.load("gunshot", "m1911firing.ogg");
+		JukeBox.load("reload", "m1911reload.ogg");
 
 		this.person = new Person("traineeglock.png", 1 , 1, world);
 		this.player = person.getBody();
 		weapon = person.getWeapon();
 		parser.load(world, map);
-
-		//groundbody
-
-		BodyDef personDef = new BodyDef();
-		personDef.type = BodyDef.BodyType.StaticBody;
-		personDef.position.set(-1, -1);
-
-		ChainShape groundShape = new ChainShape();
-		groundShape.createChain(new Vector2[] {
-				new Vector2(-20,0), new Vector2(20, 0), new Vector2(25, 10)
-		});
-
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = groundShape;
-		fixtureDef.friction = .5f;
-		fixtureDef.restitution = 0;
-
-		world.createBody(personDef).createFixture(fixtureDef);
-
-		groundShape.dispose();
-
-		//boxbody
-
-		personDef.type = BodyDef.BodyType.DynamicBody;
-		personDef.position.set(5, 10);
-
-		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(2, 2);
-
-		fixtureDef.shape = boxShape;
-		fixtureDef.friction = .5f;
-		fixtureDef.restitution = .5f;
-		fixtureDef.density = 50;
-
-		world.createBody(personDef).createFixture(fixtureDef);
-
-		boxShape.dispose();
 
 		//rayHandler = new RayHandler(world);
 		//rayHandler.setCombinedMatrix(cam.combined);
@@ -125,7 +89,7 @@ public class Play implements Screen {
 		updateCamera();
 		renderer.setView(cam);
 		renderer.render();
-		debugRenderer.render(world, cam.combined);
+		//debugRenderer.render(world, cam.combined);
 		world.step(1 / 60f, 8, 3);
         if (bodiesToDestroy.size > 0) {
             destroyBodies();
