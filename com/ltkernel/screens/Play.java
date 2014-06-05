@@ -13,7 +13,6 @@ import com.ltkernel.entities.*;
 import com.ltkernel.items.*;
 import com.ltkernel.managers.*;
 import net.dermetfan.utils.libgdx.box2d.*;
-import net.dermetfan.utils.libgdx.graphics.*;
 
 /**
  * Created by esauKang on 5/24/14.
@@ -67,7 +66,7 @@ public class Play implements Screen {
 		touchPos = new Vector3();
 		camFollow = new Vector3();
 		TmxMapLoader loader = new TmxMapLoader();
-		map = loader.load("TR_CONCRETE_TEST2.tmx");
+		map = loader.load("TR_Concrete/TR_CONCRETE_TEST2.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, .06f);                                             //scale
         createEnemies();
 		Gdx.input.setInputProcessor(new InputManager());
@@ -155,7 +154,6 @@ public class Play implements Screen {
 			} else if (body.getUserData() != null && body.getUserData() instanceof ProjectileLauncher.Bullet) {
 				Sprite sprite = ((ProjectileLauncher.Bullet) body.getUserData()).bulletSprite;
 				sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
-				System.out.println(body.getPosition());
 				sprite.draw(sb);
 				((ProjectileLauncher.Bullet) (body.getUserData())).updateWaitTime();
 			}
