@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.ltkernel.entities.*;
+import com.ltkernel.managers.JukeBox;
 import com.ltkernel.screens.Play;
 import net.dermetfan.utils.libgdx.graphics.Box2DSprite;
 import net.dermetfan.utils.libgdx.graphics.*;
@@ -78,6 +79,7 @@ public class ProjectileLauncher {
         private int waitTime;
 		public Sprite bulletSprite;
 		private final String PATH = "TracerRed.png";
+        public int justFired;
 
 		public Bullet() {
 			this.timeAlive = 2;
@@ -94,7 +96,8 @@ public class ProjectileLauncher {
 			this.fixtureDef.restitution = 0;
 			this.fixtureDef.shape = bulletShape;
             Play.bullets.add(this);
-            waitTime = 120;
+            this.waitTime = 120;
+            this.justFired = 3;
 		}
 		public Bullet(float damage) {
 			this.timeAlive = 2;
@@ -111,12 +114,13 @@ public class ProjectileLauncher {
 			this.fixtureDef.restitution = 0;
 			this.fixtureDef.shape = bulletShape;
             Play.bullets.add(this);
-            waitTime = 120;
+            this.waitTime = 120;
+            this.justFired = 3;
 		}
 
 		public void ignite(Body player, World world) {
 			bulletRad = player.getAngle() +  MathUtils.PI / 2 + MathUtils.random(-ProjectileLauncher.this.spread, ProjectileLauncher.this.spread);
-			this.bulletDef.position.set(new Vector2(player.getPosition().x + MathUtils.cos(bulletRad), player.getPosition().y + MathUtils.sin(bulletRad)));
+			this.bulletDef.position.set(new Vector2(player.getPosition().x + 2 * MathUtils.cos(bulletRad), player.getPosition().y + 2 * MathUtils.sin(bulletRad)));
 			this.bulletDef.linearVelocity.set(new Vector2(
 					player.getLinearVelocity().x + MathUtils.cos(bulletRad) * 7500,
 					player.getLinearVelocity().y + MathUtils.sin(bulletRad) * 7500
@@ -129,6 +133,7 @@ public class ProjectileLauncher {
 					bulletSprite.getWidth() /  2, bulletSprite.getHeight() / 2);
 			bulletSprite.setRotation(player.getAngle() * MathUtils.radiansToDegrees);
             body.setUserData(this);
+            JukeBox.play("gunshot");
 		}
 
         public void updateWaitTime() {

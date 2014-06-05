@@ -70,6 +70,7 @@ public class Play implements Screen {
 		renderer = new OrthogonalTiledMapRenderer(map, .06f);                                             //scale
         createEnemies();
 		Gdx.input.setInputProcessor(new InputManager());
+        JukeBox.load("gunshot", "gunshot.mp3");
 
 		this.person = new Person("traineeglock.png", 1 , 1, world);
 		this.player = person.getBody();
@@ -146,33 +147,36 @@ public class Play implements Screen {
 
 		world.getBodies(tempBodies);
 		for(Body body : tempBodies) {
-			if(body.getUserData() != null && body.getUserData() instanceof Sprite) {
-				Sprite sprite = (Sprite)body.getUserData();
-				sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
-				sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
-				sprite.draw(sb);
-			} else if (body.getUserData() != null && body.getUserData() instanceof ProjectileLauncher.Bullet) {
-                ProjectileLauncher.Bullet bullet = (ProjectileLauncher.Bullet)(body.getUserData());
-                Sprite flashBullet = new Sprite(new Texture("flash2test.png"));
-				float angle = player.getAngle() * MathUtils.radiansToDegrees - 270;
-				if(angle < 0) {
-					angle += 360;
-				}
-				angle = angle * MathUtils.degreesToRadians;
-				flashBullet.setRotation(player.getAngle() * MathUtils.radiansToDegrees);
+            if (body.getUserData() != null && body.getUserData() instanceof Sprite) {
+                Sprite sprite = (Sprite) body.getUserData();
+                sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
+                sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
+                sprite.draw(sb);
+            } else if (body.getUserData() != null && body.getUserData() instanceof ProjectileLauncher.Bullet) {
+                ProjectileLauncher.Bullet bullet = (ProjectileLauncher.Bullet) (body.getUserData());
+                if (bullet.justFired >= 0) {
+                    Sprite flashBullet = new Sprite(new Texture("flash2test.png"));
+                    float angle = player.getAngle() * MathUtils.radiansToDegrees - 270;
+                    if (angle < 0) {
+                        angle += 360;
+                    }
+                    angle = angle * MathUtils.degreesToRadians;
+                    flashBullet.setRotation(player.getAngle() * MathUtils.radiansToDegrees);
 
-				flashBullet.setPosition(player.getPosition().x - flashBullet.getWidth() / 2, player.getPosition().y - flashBullet.getHeight() / 2);
+                    flashBullet.setPosition(player.getPosition().x - flashBullet.getWidth() / 2, player.getPosition().y - flashBullet.getHeight() / 2);
 
-				flashBullet.translateX(2.65f * MathUtils.cos(angle));
-				flashBullet.translateY(2.65f * MathUtils.sin(angle));
+                    flashBullet.translateX(2.65f * MathUtils.cos(angle));
+                    flashBullet.translateY(2.65f * MathUtils.sin(angle));
 
-				flashBullet.setScale(.15f);
-                flashBullet.draw(sb);
-				Sprite sprite = ((ProjectileLauncher.Bullet) body.getUserData()).bulletSprite;
-				sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
-				sprite.draw(sb);
-			}
-		}
+                    flashBullet.setScale(.15f);
+                    flashBullet.draw(sb);
+                    bullet.justFired--;
+                }
+                Sprite sprite = ((ProjectileLauncher.Bullet) body.getUserData()).bulletSprite;
+                sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
+                sprite.draw(sb);
+            }
+        }
 		sb.end();
 		logger.log();
 	}
