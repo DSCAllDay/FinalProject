@@ -168,9 +168,6 @@ public class Play implements Screen {
 		sb.end();
 		logger.log();
 	}
-    //all right lets get back to work.
-..  //ok boss but i don't know whyyy these friggin sprites are huge I'll test em, why don't you push in a sec
-    // if you're sure, i guess. i try not to push until something's working
 
 
 	private void updateCamera() {
