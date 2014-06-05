@@ -29,7 +29,8 @@ public class Play implements Screen {
 	private Box2DDebugRenderer debugRenderer;
 	public static Vector2 movement;
 	private Array<Body> tempBodies = new Array<Body>();
-	private float speed = 500f;
+	private float speed = 400f;
+	private float sprintSpeed = 600f;
 	private RayHandler rayHandler;
 	private FPSLogger logger;
 	private Vector3 camFollow;
@@ -163,20 +164,38 @@ public class Play implements Screen {
 	}
 
 	private void handleInput(float delta) {
-		if(InputManager.W) {
-			movement.y = speed;
-		} else if (InputManager.S) {
-			movement.y = -speed;
-		} else if(!InputManager.W && !InputManager.S) {
-			movement.y = 0;
+
+		if(InputManager.SHIFT) {
+			if(InputManager.W) {
+				movement.y = sprintSpeed;
+			} else if (InputManager.S) {
+				movement.y = -sprintSpeed;
+			} else if(!InputManager.W && !InputManager.S) {
+				movement.y = 0;
+			} if(InputManager.A) {
+				movement.x = -sprintSpeed;
+			} else if(InputManager.D) {
+				movement.x = sprintSpeed;
+			} else if(!InputManager.A && !InputManager.D) {
+				movement.x = 0;
+			}
 		}
 
-		if(InputManager.A) {
-			movement.x = -speed;
-		} else if(InputManager.D) {
-			movement.x = speed;
-		} else if(!InputManager.A && !InputManager.D) {
-			movement.x = 0;
+		else {
+			if(InputManager.W) {
+				movement.y = speed;
+			} else if(InputManager.S) {
+				movement.y = -speed;
+			} else if(!InputManager.W && !InputManager.S) {
+				movement.y = 0;
+			}
+			if(InputManager.A) {
+				movement.x = -speed;
+			} else if(InputManager.D) {
+				movement.x = speed;
+			} else if(!InputManager.A && !InputManager.D) {
+				movement.x = 0;
+			}
 		}
 
 		if(person.getWeapon().isReloading) {

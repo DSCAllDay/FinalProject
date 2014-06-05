@@ -12,6 +12,7 @@ public class InputManager extends InputAdapter {
 	public static boolean S;
 	public static boolean D;
 	public static boolean R;
+	public static boolean SHIFT;
 
 	public InputManager() {
 	}
@@ -34,6 +35,9 @@ public class InputManager extends InputAdapter {
 			case Input.Keys.R:
 				R = true;
 				break;
+			case Input.Keys.SHIFT_LEFT:
+				SHIFT = true;
+				break;
 		}
 		return true;
 	}
@@ -55,6 +59,9 @@ public class InputManager extends InputAdapter {
 				break;
 			case Input.Keys.R:
 				R = false;
+				break;
+			case Input.Keys.SHIFT_LEFT:
+				SHIFT = false;
 				break;
 		}
 		return true;

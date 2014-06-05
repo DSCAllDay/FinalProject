@@ -28,7 +28,7 @@ public class Person {
 		BodyDef personDef = new BodyDef();
 		personDef.type = BodyDef.BodyType.DynamicBody;
 		personDef.position.set(posX, posY);
-		personDef.linearDamping = 4f;
+		personDef.linearDamping = 6f;
 		personDef.angularDamping = 4f;
 
 		PolygonShape shape = new PolygonShape();
